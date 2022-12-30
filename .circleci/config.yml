@@ -323,10 +323,10 @@ jobs:
 #             fi
       #       -  notify_on_failure
 
-    notify_on_deploy:
-      docker:
+  notify_on_deploy:
+    docker:
       - image: cimg/base:stable
-      steps:
+    steps:
         - slack/notify:
             event: pass
             channel: 'circle-ci'
