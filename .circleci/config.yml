@@ -1,6 +1,28 @@
 version: 2.1
+orbs:
+  slack: circleci/slack@4.12.0
 
-# commands:
+commands:
+  notify_on_failure:
+    steps:
+      - slack/notify:
+          event: fail
+          channel: 'circle-ci'
+          template: basic_fail_1
+
+  notify_on_success:
+    steps:
+      - slack/notify:
+          event: pass
+          channel: 'circle-ci'
+          template: basic_success_1
+
+  notify_on_deploy:
+    steps:
+      - slack/notify:
+          event: pass
+          channel: 'circle-ci'
+          template: success_tagged_deploy_1	
 #   destroy-environment:
 #     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
 #     parameters:
@@ -49,6 +71,7 @@ jobs:
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
+      -  notify_on_failure
 
   build-backend:
     docker:
@@ -66,6 +89,7 @@ jobs:
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
+      -  notify_on_failure
 
   test-frontend:
     docker:
@@ -80,7 +104,8 @@ jobs:
             cd frontend
             npm install
             npm test
-    
+      -  notify_on_failure
+
   test-backend:
     docker:
       - image: cimg/node:13.8.0
@@ -94,6 +119,7 @@ jobs:
             cd backend
             npm install
             npm test
+      -  notify_on_failure
 
   scan-frontend:
     docker:
@@ -111,7 +137,8 @@ jobs:
             npm update minimist --depth 4
             npm audit fix --force --audit-level=critical
             npm audit --audit-level=critical
-
+      -  notify_on_failure
+      
   scan-backend:
     docker:
       - image: cimg/node:13.8.0
@@ -127,7 +154,8 @@ jobs:
             npm audit fix --force --audit-level=critical
             npm audit fix --force --audit-level=critical
             npm audit --audit-level=critical
-            
+      -  notify_on_failure
+
 #   deploy-infrastructure:
 #     docker:
 #       # Docker image here that supports AWS CLI
@@ -161,6 +189,7 @@ jobs:
 #           paths:
 #             - project/.circleci/ansible/inventory.txt
 #       # Here's where you will add some code to rollback on failure      
+      # -  notify_on_failure
 
 #   configure-infrastructure:
 #     docker:
@@ -180,6 +209,7 @@ jobs:
 #             # Your code here
 #             exit 1
 #       # Here's where you will add some code to rollback on failure      
+      # -  notify_on_failure
 
 #   run-migrations:
 #     docker:
@@ -197,6 +227,7 @@ jobs:
 #             # Your code here
 #             exit 1
 #      # Here's where you will add some code to rollback on failure      
+      # -  notify_on_failure
 
 #   deploy-frontend:
 #     docker:
@@ -218,7 +249,8 @@ jobs:
 #           command: |
 #             # your code here
 #       # Here's where you will add some code to rollback on failure      
-                    
+      #       -  notify_on_failure
+
 #   deploy-backend:
 #     docker:
 #       # Docker image here that supports Ansible
@@ -235,6 +267,7 @@ jobs:
 #           command: |
 #             # your code here
 #       # Here's where you will add some code to rollback on failure  
+      # -  notify_on_failure
 
 #   smoke-test:
 #     docker:
@@ -258,6 +291,7 @@ jobs:
 #           command: |
 #             # your code here
 #       # Here's where you will add some code to rollback on failure  
+      # -  notify_on_failure
 
 #   cloudfront-update:
 #     docker:
@@ -273,6 +307,7 @@ jobs:
 #           command: |
 #             # your code here
 #       # Here's where you will add some code to rollback on failure  
+      # -  notify_on_failure
 
 # cleanup:
 #     docker:
@@ -292,7 +327,7 @@ jobs:
 #             then
 #               # your code here
 #             fi
-            
+      #       -  notify_on_failure
 
 workflows:
   default:
@@ -326,3 +361,5 @@ workflows:
       #     requires: [smoke-test]
       # - cleanup:
       #     requires: [cloudfront-update]
+      - notify_on_deploy:
+          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
