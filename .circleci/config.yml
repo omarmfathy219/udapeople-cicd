@@ -17,12 +17,6 @@ commands:
           channel: 'circle-ci'
           template: basic_success_1
 
-  notify_on_deploy:
-    steps:
-      - slack/notify:
-          event: pass
-          channel: 'circle-ci'
-          template: success_tagged_deploy_1	
 #   destroy-environment:
 #     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
 #     parameters:
@@ -328,6 +322,15 @@ jobs:
 #               # your code here
 #             fi
       #       -  notify_on_failure
+
+    notify_on_deploy:
+      docker:
+      - image: cimg/base:stable
+      steps:
+        - slack/notify:
+            event: pass
+            channel: 'circle-ci'
+            template: success_tagged_deploy_1	
 
 workflows:
   default:
