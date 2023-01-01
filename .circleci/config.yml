@@ -183,6 +183,7 @@ jobs:
               --tags project=udapeople \
               --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  
+            aws cloudformation describe-stack-events --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7} --query 'StackEvents[?ResourceStatus==`CREATE_FAILED`].ResourceStatusReason' --output text
       - run:
           name: Ensure front-end infrastructure exist
           command: |
