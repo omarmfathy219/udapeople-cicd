@@ -251,25 +251,25 @@ jobs:
       - run:
           name: Run migrations
           command: |
-            mkdir ~/.npm-global
-            npm config set prefix '~/.npm-global'
-            echo "export PATH=~/.npm-global/bin:$PATH" >> $BASH_ENV
-            echo "export PATH=~/.npm-global/bin:$PATH" >> ~/.profile
-            source $BASH_ENV
-            source ~/.profile
-            cd backend
-            npm cache clean --force
-            npm install -g live-server
-            npm install
-            npm run migrations > migrations_dump.txt
+            # mkdir ~/.npm-global
+            # npm config set prefix '~/.npm-global'
+            # echo "export PATH=~/.npm-global/bin:$PATH" >> $BASH_ENV
+            # echo "export PATH=~/.npm-global/bin:$PATH" >> ~/.profile
+            # source $BASH_ENV
+            # source ~/.profile
+            # cd backend
+            # npm cache clean --force
+            # npm install -g live-server
+            # npm install
+            # npm run migrations > migrations_dump.txt
       - run:
           name: Send migration results to kvdb.io
           command: |
-            if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
-            then
-              echo "post result to kvdb.io..."
-              curl https://kvdb.io/${KVDB_BUCKET}/migration_${CIRCLE_WORKFLOW_ID:0:7} -d '1
-            fi
+            # if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
+            # then
+            #   echo "post result to kvdb.io..."
+            #   curl https://kvdb.io/${KVDB_BUCKET}/migration_${CIRCLE_WORKFLOW_ID:0:7} -d '1
+            # fi
       - destroy-environment
       - revert-migrations
 
