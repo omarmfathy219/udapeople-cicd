@@ -1,0 +1,85 @@
+---
+-   name: "update apt"
+    become: true
+    apt:
+        update_cache: yes
+
+-   name: "upgrade apt packages"
+    become: true
+    apt:
+        upgrade: "yes"
+
+
+# -   name: "Install Node.js 13"
+#     become: true
+#     shell: |
+#       sudo apt-get update -y && curl -fsSL https://deb.nodesource.com/setup_13.x | sudo -E bash -
+#       sudo apt-get install -y nodejs 
+#       sudo npm install --global n
+#       sudo n 13.8.0 
+# -   name: "install dependencies."
+#     become: true
+#     apt:
+#         name: ["nodejs", "npm"]
+#         state: latest
+#         update_cache: yes
+
+# -   name: "install n"
+#     become: true
+#     npm:
+#         name: n
+#         global: yes
+#         production: yes
+
+# -   name: "install nodejs 13.8.0"
+#     become: true
+#     shell: n 13.8.0
+
+-   name: Install Node.js 13
+    become: true
+    shell: |
+        sudo apt update -y && curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+        sudo apt install -y nodejs 
+            
+        sudo npm install --global n
+        sudo n 13.8.0
+
+-   name: "Install PM2"
+    become: true
+    npm:
+        name: pm2
+        global: yes
+        production: yes
+        state: present
+
+
+  # - name: "update packages."
+  #   become: true
+  #   apt:
+  #     update_cache: yes
+  # - name: "upgrade packages"
+  #   become: true
+  #   apt:
+  #     upgrade: yes
+
+  # - name: "Install node.js from nodesource"
+  #   become: true
+  #   shell: |
+  #     curl -fsSL https://deb.nodesource.com/setup_13.x | sudo -E bash -
+      
+  #     sudo apt -y install nodejs
+
+  # - name: "Install Node.js 13"
+  #   become: true
+  #   apt: 
+  #    name: ["nodejs"]
+  #    state: latest
+  #    update_cache: yes 
+     
+  # - name: "install pm2"
+  #   become: true
+  #   npm:
+  #     name: pm2
+  #     global: yes
+  #     production: yes
+  #     state: present
