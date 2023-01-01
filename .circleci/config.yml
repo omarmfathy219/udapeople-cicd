@@ -91,6 +91,7 @@ jobs:
       - run:
           name: Build front-end
           command: |
+            rm -rf node_modules
             cd frontend
             npm install
             npm run build
