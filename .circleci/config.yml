@@ -54,18 +54,18 @@ commands:
             aws s3 rm s3://udapeople-<< parameters.workflow_id >> --recursive
 
   revert-migrations:
-    description: Revert the last migration if successfully run in the current workflow.
-    parameters:
-      workflow_id:
-        type: string
-        default: ${CIRCLE_WORKFLOW_ID:0:7}
-    steps:
-      - run:
+      description: Revert the last migration if successfully run in the current workflow.
+      parameters:
+        Workflow_ID:
+          type: string 
+          default: "${CIRCLE_WORKFLOW_ID:0:7}"
+      steps:
+       - run:
           name: Revert migrations
           when: on_fail
           command: |
             SUCCESS=$(curl --insecure http://kvdb.io/${KVDB_BUCKET}/migration_<< parameters.Workflow_ID >>)
-            if(( $SUCCESS == 1 )); 
+            if(( $SUCCESS==1 )); 
             then
               cd ~/project/backend
               npm install
