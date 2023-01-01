@@ -181,8 +181,14 @@ jobs:
       - checkout
       - install_aws_cli
       - run:
-          name: Ensure back-end infrastructure exists
+          name: Deploy CloudFront
           command: |
+            aws cloudformation deploy \
+            --template-file .circleci/files/cloudfront.yml \
+            --tags project=udapeople \
+            --stack-name "IntialStack" \
+            --parameter-overrides ID=omarmfathy219
+
             aws cloudformation deploy \
               --template-file .circleci/files/backend.yml \
               --tags project=udapeople \
