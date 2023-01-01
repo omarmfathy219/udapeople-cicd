@@ -37,19 +37,16 @@ commands:
             sudo apt install software-properties-common
             sudo apt-add-repository --yes --update ppa:ansible/ansible
             sudo apt install ansible
-
             
-  #   destroy-environment:
-#     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
-#     parameters:
-#       # Add parameter here   
-#     steps:
-#       - run:
-#           name: Destroy environments
-#           when: on_fail
-#           command: |
-#             # Your code here
-#             exit 1
+    destroy-environment:
+    description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
+    parameters:
+        
+    steps:
+      - run:
+          name: Destroy environments
+          when: on_fail
+          command: |
 
 #   revert-migrations:
 #     description: Revert the last migration if successfully run in the current workflow.
