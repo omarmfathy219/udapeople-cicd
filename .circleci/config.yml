@@ -37,6 +37,7 @@ commands:
             sudo apt install software-properties-common -y
             sudo apt-add-repository --yes --update ppa:ansible/ansible
             sudo apt install ansible -y
+
   install_nodejs:
     description: Install Nodejs
     steps:
@@ -227,8 +228,7 @@ jobs:
       - checkout
       - install_ansible
       - add_ssh_keys:
-          fingerprints:
-            - "a0:9d:1c:2e:3f:4g:5h:6i:7j:8k:9l:0m:1n:2o:3p:4q:5r"
+          fingerprints: [a0:9d:1c:2e:3f:4g:5h:6i:7j:8k:9l:0m:1n:2o:3p:4q:5r]
       - attach_workspace:
           at: ~/
       - run:
@@ -302,24 +302,42 @@ jobs:
       - destroy-environment
       - revert-migrations 
 
-#   deploy-backend:
-#     docker:
-#       # Docker image here that supports Ansible
-#     steps:
-#       # Checkout code from git
-#       # Add ssh keys with fingerprint
-#       # attach workspace
-#       - run:
-#           name: Install dependencies
-#           command: |
-#             # your code here
-#       - run:
-#           name: Deploy backend
-#           command: |
-#             # your code here
-#       # Here's where you will add some code to rollback on failure  
-      # -  notify_on_failure
-
+  deploy-backend:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - install_aws_cli
+      - install_ansible
+      - install_nodejs
+      - add_ssh_keys:
+          fingerprints: ["a0:9d:1c:2e:3f:4g:5h:6i:7j:8k:9l:0m:1n:2o:3p:4q:5r"]
+      - attach_workspace:
+          at: ~/
+      - restore_cache:
+          keys: [backend-deps]
+      - run:
+          name: Install dependencies
+          command: |
+            cd backend
+            npm install
+      - run:
+          name: Package Backend
+          command: |
+            cd backend
+            npm run build
+            tar -czf artifact.tar.gz dist/* package.json package*
+            cd ..
+            cp backend/artifact.tar.gz . .circleci/ansible/roles/deploy/files
+      - run:
+          name: Deploy backend
+          command: |
+            export TYPEORM_MIGRATIONS_DIR=./migrations
+            export TYPEORM_ENTITIES=./modules/domain/**/*.entity{.ts,.js}
+            export TYPEORM_MIGRATIONS=./migrations/*.ts
+            cd .circleci/ansible
+            cat inventory.txt
+            ansible-playbook -i inventory.txt deploy-backend.yml
 #   smoke-test:
 #     docker:
 #       # Lightweight Docker image 
@@ -413,8 +431,8 @@ workflows:
           requires: [configure-infrastructure]
       - deploy-frontend:
           requires: [run-migrations]
-      # - deploy-backend:
-      #     requires: [run-migrations]
+      - deploy-backend:
+          requires: [run-migrations]
       # - smoke-test:
       #     requires: [deploy-backend, deploy-frontend]
       # - cloudfront-update:
