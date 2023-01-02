@@ -25,10 +25,7 @@ Resources:
           FromPort: 9100
           ToPort: 9100
           CidrIp: 0.0.0.0/0
-        # - IpProtocol: tcp
-        #   FromPort: 0
-        #   ToPort: 65535
-        #   CidrIp: 0.0.0.0/0
+
   EC2Instance:
     Type: AWS::EC2::Instance
     Properties:
@@ -37,17 +34,14 @@ Resources:
         - Ref: InstanceSecurityGroup
       KeyName: udacity
       ImageId: ami-0d70546e43a941d70
-      # ami-0d70546e43a941d70
-      # ami-0ddf424f81ddb0720    #ami-068663a3c619dd892 
       Tags:
         - Key: Name
           Value: !Sub backend-${ID}
         - Key: Project
-          Value: !Sub Udaapp
+          Value: Udapeople
 
-  # InstanceEIP:
-  #   Type: AWS::EC2::EIP
-  #   Properties:
-  #     Domain: vpc
-  #     InstanceId: !Ref EC2Instance
-
+  InstanceEIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+      InstanceId: !Ref EC2Instance
